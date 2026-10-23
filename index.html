@@ -73,16 +73,12 @@
         <!-- Foto Dokumentasi Sekolah -->
         <div class="md:col-span-5 flex justify-center">
           <div class="relative rounded-xl overflow-hidden border-4 border-white/20 shadow-2xl group">
-            <div id="slideDokumentasi" class="relative w-full h-64 md:h-72">
-              <img src="https://raw.githubusercontent.com/nfoxa/siara-uks/refs/heads/main/slide" alt="Siswa SD NEGERI 105855 PTPN II" class="absolute inset-0 w-full h-full object-cover object-center transform group-hover:scale-105 transition duration-500">
-            </div>
-            <div id="slideDots" class="absolute bottom-9 inset-x-0 flex justify-center gap-1.5 z-10"></div>
+            <img src="https://raw.githubusercontent.com/nfoxa/siara-uks/main/slide/1.jpeg" alt="Siswa SD NEGERI 105855 PTPN II" class="w-full h-64 md:h-72 object-cover object-center transform group-hover:scale-105 transition duration-500">
             <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-3 text-white text-[11px] text-center">
               Dokumentasi Dokter Kecil & Siswa SDN 105855
             </div>
           </div>
         </div>
-      </div>
 
       <!-- Kartu Ringkasan & Fitur Utama -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -850,65 +846,7 @@
 
     // Tabel dimuat dari spreadsheet saat tab Antropometri / UKS dibuka (setelah login)
 
-    // --- SLIDE OTOMATIS DOKUMENTASI (foto dari folder GitHub /slide) ---
-    (async function initSlideDokumentasi() {
-      const wrap = document.getElementById('slideDokumentasi');
-      const dots = document.getElementById('slideDots');
-      const API = 'https://api.github.com/repos/nfoxa/siara-uks/contents/slide?ref=main';
-      const CACHE_KEY = 'slide_dokumentasi_cache';
-      const CACHE_MS = 10 * 60 * 1000;
-      const INTERVAL_MS = 4000;
-
-      async function getPhotoUrls() {
-        try {
-          const c = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
-          if (c && Date.now() - c.time < CACHE_MS) return c.urls;
-        } catch (e) {}
-        const res = await fetch(API);
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const files = await res.json();
-        const urls = files
-          .filter(f => f.type === 'file' && /\.(jpe?g|png|webp|gif)$/i.test(f.name))
-          .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }))
-          .map(f => f.download_url);
-        try { localStorage.setItem(CACHE_KEY, JSON.stringify({ time: Date.now(), urls })); } catch (e) {}
-        return urls;
-      }
-
-      try {
-        const urls = await getPhotoUrls();
-        if (!urls.length) return; // tidak ada foto -> tetap pakai foto bawaan
-
-        wrap.innerHTML = '';
-        const slides = urls.map((u, i) => {
-          const img = document.createElement('img');
-          img.src = u;
-          img.alt = 'Dokumentasi Dokter Kecil & Siswa SDN 105855';
-          img.className = 'absolute inset-0 w-full h-full object-cover object-center transform group-hover:scale-105 transition-all duration-700 ' + (i === 0 ? 'opacity-100' : 'opacity-0');
-          wrap.appendChild(img);
-          return img;
-        });
-        const dotEls = urls.map(() => {
-          const d = document.createElement('span');
-          d.className = 'w-1.5 h-1.5 rounded-full bg-white/40 transition';
-          dots.appendChild(d);
-          return d;
-        });
-
-        let idx = 0;
-        function show(n) {
-          slides[idx].classList.replace('opacity-100', 'opacity-0');
-          dotEls[idx].classList.replace('bg-white', 'bg-white/40');
-          idx = n;
-          slides[idx].classList.replace('opacity-0', 'opacity-100');
-          dotEls[idx].classList.replace('bg-white/40', 'bg-white');
-        }
-        dotEls[0].classList.replace('bg-white/40', 'bg-white');
-        if (slides.length > 1) setInterval(() => show((idx + 1) % slides.length), INTERVAL_MS);
-      } catch (err) {
-        console.warn('Slide dokumentasi gagal dimuat, memakai foto bawaan:', err);
-      }
-    })();    
+   
   </script>
 </body>
 </html>
