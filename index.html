@@ -559,6 +559,11 @@
       return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     }
 
+    // Ubah nilai apa pun menjadi teks untuk Google Sheets (cegah auto-format tanggal/angka)
+    function toText(v) {
+      return "'" + String(v ?? '');
+    }
+
     function setSubmitBusy(formId, busy, label) {
       const btn = document.querySelector(`#${formId} button[type="submit"]`);
       if (!btn) return;
@@ -634,7 +639,7 @@
 
     async function saveAntroData(event) {
       event.preventDefault();
- 
+
       const nama = document.getElementById('namaAntro').value;
       const kelas = document.getElementById('kelasAntro').value;
       const jk = document.getElementById('jkAntro').value;
@@ -642,9 +647,9 @@
       const bb = parseFloat(document.getElementById('bbAntro').value);
       const tb = parseFloat(document.getElementById('tbAntro').value);
       const vaxList = getSelectedVaccines();
- 
+
       const { imt, status } = hitungIMT(bb, tb);
- 
+
       // Semua data dikirim sebagai TEKS (awalan ' memaksa Google Sheets menyimpan sebagai teks)
       const record = {
         id: toText(Date.now()),
@@ -658,7 +663,7 @@
         status: toText(status),
         vaxList: toText((vaxList.length > 0 ? vaxList : ['Belum Dicatat']).join('; '))
       };
-      
+
       setSubmitBusy('antropometriForm', true);
       try {
         await apiPost({ action: 'add', sheet: 'antro', record });
@@ -760,7 +765,7 @@
 
     async function saveUksData(event) {
       event.preventDefault();
- 
+
       // Semua data dikirim sebagai TEKS (awalan ' memaksa Google Sheets menyimpan sebagai teks)
       const record = {
         id: toText(Date.now()),
@@ -772,7 +777,7 @@
         tindakan: toText(document.getElementById('tindakanUks').value),
         status: toText(document.getElementById('statusUks').value)
       };
-      
+
       setSubmitBusy('uksForm', true);
       try {
         await apiPost({ action: 'add', sheet: 'uks', record });
@@ -877,7 +882,7 @@
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const files = await res.json();
         const urls = files
-          .filter(f => f.type === 'file' && /\.(jpeg|jpg|png|webp|gif)$/i.test(f.name))
+          .filter(f => f.type === 'file' && /\.(jpe?g|png|webp|gif)$/i.test(f.name))
           .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }))
           .map(f => f.download_url);
         try { localStorage.setItem(CACHE_KEY, JSON.stringify({ time: Date.now(), urls })); } catch (e) {}
