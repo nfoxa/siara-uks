@@ -452,92 +452,75 @@
   <script>
     const NAMA_SEKOLAH = "SD NEGERI 105855 PTPN II TANJUNG MORAWA";
     const APP_PASSWORD = "sdn105855";
-    
-    let isAuthenticated = false;
-    let targetTabAfterLogin = 'antropometri';
+    // Isi dengan URL Web App Google Apps Script setelah deployment.
+    const GOOGLE_APPS_SCRIPT_URL = "TEMPEL_URL_WEB_APP_APPS_SCRIPT_DI_SINI";
+    let dataAntroSpreadsheet = [];
+    let dataUksSpreadsheet = [];
 
-    // Set tanggal pemeriksaan default hari ini
-    document.getElementById('tglAntro').valueAsDate = new Date();
-    document.getElementById('tglUks').valueAsDate = new Date();
+    // Komunikasi JSONP agar pembacaan spreadsheet dapat dilakukan lintas domain.
+    function spreadsheetRequest(action, payload = {}) {
+      return new Promise((resolve, reject) => {
+        if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("TEMPEL_URL")) {
+          reject(new Error("URL Web App Apps Script belum dipasang."));
+          return;
+        }
+        const callbackName = "spreadsheetCallback_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
+        const script = document.createElement("script");
+        const timeout = setTimeout(() => finish(new Error("Waktu koneksi ke spreadsheet habis.")), 20000);
+        function finish(error, result) {
+          clearTimeout(timeout);
+          delete window[callbackName];
+          script.remove();
+          if (error) reject(error); else if (!result || !result.success) reject(new Error(result?.message || "Permintaan spreadsheet gagal.")); else resolve(result);
+        }
+        window[callbackName] = result => finish(null, result);
+        script.onerror = () => finish(new Error("Tidak dapat menghubungi Google Apps Script."));
+        const params = new URLSearchParams({ action, callback: callbackName, payload: JSON.stringify(payload) });
+        script.src = GOOGLE_APPS_SCRIPT_URL + (GOOGLE_APPS_SCRIPT_URL.includes("?") ? "&" : "?") + params.toString();
+        document.body.appendChild(script);
+      });
+    }
 
-    function requestAppAccess(tabName) {
-      targetTabAfterLogin = tabName;
-      if (isAuthenticated) {
-        switchTab(tabName);
-      } else {
-        openPasswordModal();
+    async function kirimKeSpreadsheet(sheetName, data) {
+      try {
+        await spreadsheetRequest("save", { sheetName, data });
+        return true;
+      } catch (error) {
+        alert("Gagal menyimpan ke Google Spreadsheet: " + error.message);
+        console.error(error);
+        return false;
       }
     }
 
-    function openPasswordModal() {
-      document.getElementById('passwordModal').classList.remove('hidden');
-      document.getElementById('passwordModal').classList.add('flex');
-      document.getElementById('inputPassword').focus();
-    }
-
-    function closePasswordModal() {
-      document.getElementById('passwordModal').classList.add('hidden');
-      document.getElementById('passwordModal').classList.remove('flex');
-      document.getElementById('passwordError').classList.add('hidden');
-      document.getElementById('inputPassword').value = '';
-    }
-
-    function togglePasswordVisibility() {
-      const input = document.getElementById('inputPassword');
-      input.type = (input.type === "password") ? "text" : "password";
-    }
-
-    function verifyPassword(event) {
-      event.preventDefault();
-      const enteredPass = document.getElementById('inputPassword').value;
-
-      if (enteredPass === APP_PASSWORD) {
-        isAuthenticated = true;
-        closePasswordModal();
-        switchTab(targetTabAfterLogin);
-      } else {
-        document.getElementById('passwordError').classList.remove('hidden');
+    async function hapusDariSpreadsheet(sheetName, id) {
+      try {
+        await spreadsheetRequest("delete", { sheetName, id });
+        return true;
+      } catch (error) {
+        alert("Gagal menghapus data di Google Spreadsheet: " + error.message);
+        console.error(error);
+        return false;
       }
     }
 
-    function logoutApp() {
-      isAuthenticated = false;
-      switchTab('home');
-    }
-
-    function switchTab(tab) {
-      const pageHome = document.getElementById('pageHome');
-      const pageAntropometri = document.getElementById('pageAntropometri');
-      const pageUks = document.getElementById('pageUks');
-      
-      const btnHome = document.getElementById('btnNavHome');
-      const btnAntro = document.getElementById('btnNavAntropometri');
-      const btnUks = document.getElementById('btnNavUks');
-
-      // Reset semua tombol navigasi
-      btnHome.className = "px-3 py-2 rounded-lg text-blue-100 hover:text-white hover:bg-blue-700/50 transition";
-      btnAntro.className = "px-3 py-2 rounded-lg text-blue-100 hover:text-white hover:bg-blue-700/50 transition";
-      btnUks.className = "px-3 py-2 rounded-lg text-blue-100 hover:text-white hover:bg-blue-700/50 transition";
-
-      pageHome.classList.add('hidden');
-      pageAntropometri.classList.add('hidden');
-      pageUks.classList.add('hidden');
-
-      if (tab === 'home') {
-        pageHome.classList.remove('hidden');
-        btnHome.className = "px-3 py-2 rounded-lg bg-yellow-400 text-blue-900 shadow font-bold transition";
-      } else if (tab === 'antropometri') {
-        pageAntropometri.classList.remove('hidden');
-        btnAntro.className = "px-3 py-2 rounded-lg bg-yellow-400 text-blue-900 shadow font-bold transition";
-      } else if (tab === 'uks') {
-        pageUks.classList.remove('hidden');
-        btnUks.className = "px-3 py-2 rounded-lg bg-yellow-400 text-blue-900 shadow font-bold transition";
+    async function muatDataAntro() {
+      try {
+        const result = await spreadsheetRequest("list", { sheetName: "Antropometri" });
+        dataAntroSpreadsheet = result.data || [];
+        renderAntroTable();
+      } catch (error) {
+        document.getElementById('tableAntroBody').innerHTML = `<tr><td colspan="7" class="text-center py-8 text-red-500">Gagal memuat spreadsheet: ${error.message}</td></tr>`;
       }
     }
 
-    // --- DATA HANDLING ANTROPOMETRI & VAKSIN ---
-    function getStoredAntroData() {
-      return JSON.parse(localStorage.getItem('antropometri_sd_105855')) || [];
+    async function muatDataUks() {
+      try {
+        const result = await spreadsheetRequest("list", { sheetName: "Riwayat UKS" });
+        dataUksSpreadsheet = result.data || [];
+        renderUksTable();
+      } catch (error) {
+        document.getElementById('tableUksBody').innerHTML = `<tr><td colspan="6" class="text-center py-8 text-red-500">Gagal memuat spreadsheet: ${error.message}</td></tr>`;
+      }
     }
 
     function hitungIMT(bb, tbCm) {
@@ -578,7 +561,7 @@
       return vaccines;
     }
 
-    function saveAntroData(event) {
+    async function saveAntroData(event) {
       event.preventDefault();
 
       const nama = document.getElementById('namaAntro').value;
@@ -597,21 +580,22 @@
         vaxList: vaxList.length > 0 ? vaxList : ['Belum Dicatat']
       };
 
-      const currentData = getStoredAntroData();
-      currentData.unshift(newRecord);
-      localStorage.setItem('antropometri_sd_105855', JSON.stringify(currentData));
+      const tersimpan = await kirimKeSpreadsheet("Antropometri", {
+        id: newRecord.id,
+        tanggal: tglUkur,
+        nama, kelas, jenisKelamin: jk, beratBadanKg: bb, tinggiBadanCm: tb,
+        imt, statusGizi: status, vaksin: newRecord.vaxList.join(", ")
+      });
+      if (!tersimpan) return;
 
       document.getElementById('antropometriForm').reset();
       document.getElementById('tglAntro').valueAsDate = new Date();
-      renderAntroTable();
+      await muatDataAntro();
     }
 
-    function deleteAntroData(id) {
+    async function deleteAntroData(id) {
       if (confirm('Apakah Anda yakin ingin menghapus data antropometri ini?')) {
-        let currentData = getStoredAntroData();
-        currentData = currentData.filter(item => item.id !== id);
-        localStorage.setItem('antropometri_sd_105855', JSON.stringify(currentData));
-        renderAntroTable();
+        if (await hapusDariSpreadsheet('Antropometri', id)) await muatDataAntro();
       }
     }
 
@@ -680,10 +664,10 @@
 
     // --- DATA HANDLING RIWAYAT UKS (SISWA SAKIT) ---
     function getStoredUksData() {
-      return JSON.parse(localStorage.getItem('uks_sakit_sd_105855')) || [];
+      return dataUksSpreadsheet;
     }
 
-    function saveUksData(event) {
+    async function saveUksData(event) {
       event.preventDefault();
 
       const nama = document.getElementById('namaUks').value;
@@ -699,21 +683,21 @@
         nama, kelas, jk, tglUks, keluhan, tindakan, status
       };
 
-      const currentData = getStoredUksData();
-      currentData.unshift(newRecord);
-      localStorage.setItem('uks_sakit_sd_105855', JSON.stringify(currentData));
+      const tersimpan = await kirimKeSpreadsheet("Riwayat UKS", {
+        id: newRecord.id,
+        tanggal: tglUks,
+        nama, kelas, jenisKelamin: jk, keluhan, tindakan, statusAkhir: status
+      });
+      if (!tersimpan) return;
 
       document.getElementById('uksForm').reset();
       document.getElementById('tglUks').valueAsDate = new Date();
-      renderUksTable();
+      await muatDataUks();
     }
 
-    function deleteUksData(id) {
+    async function deleteUksData(id) {
       if (confirm('Apakah Anda yakin ingin menghapus catatan UKS ini?')) {
-        let currentData = getStoredUksData();
-        currentData = currentData.filter(item => item.id !== id);
-        localStorage.setItem('uks_sakit_sd_105855', JSON.stringify(currentData));
-        renderUksTable();
+        if (await hapusDariSpreadsheet('Riwayat UKS', id)) await muatDataUks();
       }
     }
 
@@ -778,9 +762,9 @@
       document.body.removeChild(link);
     }
 
-    // Inisialisasi tabel saat halaman dimuat
-    renderAntroTable();
-    renderUksTable();
+    // Tabel selalu dimuat dari Google Spreadsheet, bukan penyimpanan lokal.
+    muatDataAntro();
+    muatDataUks();
   </script>
 </body>
 </html>
