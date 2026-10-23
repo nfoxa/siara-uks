@@ -857,14 +857,7 @@
       const dots = document.getElementById('slideDots');
       const INTERVAL_MS = 4000;
 
-      // DAFTAR FOTO SLIDE — tambah/hapus/ubah urutan nama file di bawah ini.
-      // File harus ada di folder "slide" pada repo GitHub nfoxa/siara-uks.
-      const BASE_URL = 'https://raw.githubusercontent.com/nfoxa/siara-uks/main/slide/';
-      const DAFTAR_FOTO = [
-        '1.png',
-        '2.jpeg'
-      ];
-
+  
       // Foto diambil otomatis dari folder Google Drive lewat Apps Script (action=photos).
       // Jika gagal/belum diatur, dipakai daftar foto GitHub di atas sebagai cadangan.
       async function getPhotoUrls() {
