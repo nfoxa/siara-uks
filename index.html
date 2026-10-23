@@ -588,54 +588,50 @@ async function loadAntro() {
       </td>
     </tr>`;
 
-  try {
-    const rows = await apiList('antro');
+ 
+try {
+  const rows = await apiList('antro');
 
-    antroData = rows.map(r => {
-      const bb = r.bb;
-      const tb = r.tb;
+  antroData = rows.map(r => {
+    const bb = r.bb;
+    const tb = r.tb;
 
-      const bbNum = parseFloat(String(bb ?? '').replace(',', '.'));
-      const tbNum = parseFloat(String(tb ?? '').replace(',', '.'));
+    const bbNum = parseFloat(String(bb ?? '').replace(',', '.'));
+    const tbNum = parseFloat(String(tb ?? '').replace(',', '.'));
 
-      const g = hitungIMT(bbNum, tbNum);
+    const g = hitungIMT(bbNum, tbNum);
 
-      const imt =
-        r.imt !== '' && r.imt != null
-          ? r.imt
-          : g.imt;
+    // Gunakan IMT dari spreadsheet jika berupa angka.
+    const imtSheet = Number(String(r.imt ?? '').replace(',', '.'));
+    const imt = String(r.imt ?? '').trim() !== '' &&
+      Number.isFinite(imtSheet)
+        ? imtSheet
+        : g.imt;
 
-      const status =
-        r.status !== '' && r.status != null
-          ? r.status
-          : g.status;
+    const status = String(r.status ?? '').trim() || g.status;
 
-      const vaxList = String(r.vaxList ?? '')
-        .split(';')
-        .map(s => s.trim())
-        .filter(Boolean);
+    const vaxList = String(r.vaxList ?? '')
+      .split(';')
+      .map(s => s.trim())
+      .filter(Boolean);
 
-      return {
-        ...r,
-        bb,
-        tb,
-        imt,
-        status,
-        colorClass: warnaStatusGizi(status),
-        vaxList
-      };
-    });
+    return {
+      ...r,
+      bb,
+      tb,
+      imt,
+      status,
+      colorClass: warnaStatusGizi(status),
+      vaxList
+    };
+  });
 
-    renderAntroTable();
-  } catch (err) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="7"
-            class="text-center py-8 text-red-500">
-          Gagal memuat data: ${esc(err.message)}
-        </td>
-      </tr>`;
-  }
+  renderAntroTable();
+} catch (err) {
+  document.getElementById('tableAntroBody').innerHTML =
+    `<tr><td colspan="7" class="text-center py-8 text-red-500">
+      Gagal memuat data: ${esc(err.message)}
+    </td></tr>`;
 }
 
     function warnaStatusGizi(status) {
