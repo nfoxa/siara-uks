@@ -860,6 +860,7 @@
       const INTERVAL_MS = 4000;
 
 
+
 async function getPhotoUrls() {
   const apiUrl =
     'https://api.github.com/repos/nfoxa/siara-uks/contents/slide?ref=main';
@@ -867,27 +868,20 @@ async function getPhotoUrls() {
   const response = await fetch(apiUrl);
 
   if (!response.ok) {
-    throw new Error(
-      'Gagal membaca folder slide GitHub: HTTP ' + response.status
-    );
+    throw new Error(`GitHub gagal memuat foto: ${response.status}`);
   }
 
   const files = await response.json();
 
-  const urls = files
+  return files
     .filter(file =>
       file.type === 'file' &&
       /\.(jpg|jpeg|png|webp|gif)$/i.test(file.name)
     )
     .sort((a, b) => a.name.localeCompare(b.name))
     .map(file => file.download_url);
-
-  if (urls.length === 0) {
-    throw new Error('Tidak ada file foto di folder slide');
-  }
-
-  return urls;
 }
+
 
 
       try {
