@@ -868,7 +868,7 @@
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const files = await res.json();
         const urls = files
-          .filter(f => f.type === 'file' && /\.(jpe?g|png|webp|gif)$/i.test(f.name))
+          .filter(f => f.type === 'file' && /\.(jpeg|jpg|png|webp|gif)$/i.test(f.name))
           .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }))
           .map(f => f.download_url);
         try { localStorage.setItem(CACHE_KEY, JSON.stringify({ time: Date.now(), urls })); } catch (e) {}
