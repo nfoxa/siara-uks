@@ -876,7 +876,7 @@ async function getPhotoUrls() {
   return files
     .filter(file =>
       file.type === 'file' &&
-      /\.(jpe?g|png|webp|gif)$/i.test(file.name)
+      /\.(jpe?g|jpg|png|webp|gif)$/i.test(file.name)
     )
     .sort((a, b) => a.name.localeCompare(b.name))
     .map(file => file.download_url);
