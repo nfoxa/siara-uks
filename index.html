@@ -860,20 +860,28 @@
   
       // Foto diambil otomatis dari folder Google Drive lewat Apps Script (action=photos).
       // Jika gagal/belum diatur, dipakai daftar foto GitHub di atas sebagai cadangan.
-      async function getPhotoUrls() {
-        try {
-          if (typeof SCRIPT_URL === 'string' && SCRIPT_URL.startsWith('https://')) {
-            const res = await fetch(`${SCRIPT_URL}?action=photos`);
-            const json = await res.json();
-            if (json.ok && json.data.length) {
-              return json.data.map(f => `https://drive.google.com/thumbnail?id=${encodeURIComponent(f.id)}&sz=w1200`);
-            }
-          }
-        } catch (e) {
-          console.warn('Foto Drive gagal dimuat, memakai cadangan GitHub:', e);
-        }
-        return DAFTAR_FOTO.map(nama => BASE_URL + encodeURIComponent(nama));
-      }
+     
+async function getPhotoUrls() {
+  const apiUrl =
+    'https://api.github.com/repos/nfoxa/siara-uks/contents/slide?ref=main';
+
+  const response = await fetch(apiUrl);
+
+  if (!response.ok) {
+    throw new Error('Folder slide GitHub gagal diakses');
+  }
+
+  const files = await response.json();
+
+  return files
+    .filter(file =>
+      file.type === 'file' &&
+      /\.(jpe?g|png|webp|gif)$/i.test(file.name)
+    )
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map(file => file.download_url);
+}
+
 
       try {
         const urls = await getPhotoUrls();
