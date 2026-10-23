@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistem Informasi Antropometri & UKS - SDN 105855 PTPN II Tanjung Morawa</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 min-h-screen font-sans flex flex-col justify-between">
+
+  <!-- Header & Navigasi -->
+  <header class="bg-blue-800 text-white shadow-lg border-b-4 border-yellow-400">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+      
+      <!-- Identitas Sekolah & Logo Kabupaten Deli Serdang -->
+      <div class="flex items-center gap-3 text-center md:text-left">
+        <img src="Lambang_Kabupaten_Deli_Serdang.jpg" alt="Logo Kabupaten Deli Serdang" class="w-12 h-14 object-contain bg-white/10 p-1 rounded border border-white/20 shrink-0">
+        <div>
+          <span class="bg-blue-900 text-yellow-300 text-[10px] font-bold px-2 py-0.5 rounded border border-yellow-400 uppercase tracking-wider">
+            Kab. Deli Serdang • Kec. Tanjung Morawa
+          </span>
+          <h1 class="text-xl md:text-2xl font-extrabold tracking-tight">SD NEGERI 105855 PTPN II</h1>
+          <p class="text-blue-200 text-xs">Sistem Rekam Antropometri, Vaksinasi & Pelayanan UKS Siswa</p>
+        </div>
+      </div>
+
+      <!-- Menu Navigasi Tab -->
+      <nav class="flex flex-wrap justify-center bg-blue-900/60 p-1.5 rounded-xl border border-blue-700/50 text-xs md:text-sm font-semibold gap-1">
+        <button id="btnNavHome" onclick="switchTab('home')" class="px-3 py-2 rounded-lg bg-yellow-400 text-blue-900 shadow font-bold transition">
+          🏠 Beranda
+        </button>
+        <button id="btnNavAntropometri" onclick="requestAppAccess('antropometri')" class="px-3 py-2 rounded-lg text-blue-100 hover:text-white hover:bg-blue-700/50 transition">
+          🔒 Antropometri & Vaksin
+        </button>
+        <button id="btnNavUks" onclick="requestAppAccess('uks')" class="px-3 py-2 rounded-lg text-blue-100 hover:text-white hover:bg-blue-700/50 transition">
+          🏥 Riwayat UKS
+        </button>
+      </nav>
+
+    </div>
+  </header>
+
+  <!-- Konten Utama -->
+  <main class="max-w-7xl mx-auto p-4 md:p-6 w-full flex-grow">
+
+    <!-- ================= 1. TAMPILAN UTAMA (PORTAL MASUK) ================= -->
+    <section id="pageHome" class="space-y-6">
+      
+      <!-- Banner Hero dengan Foto Sekolah -->
+      <div class="bg-gradient-to-br from-blue-700 to-blue-900 rounded-2xl p-6 md:p-8 text-white shadow-xl grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+        
+        <div class="md:col-span-7 space-y-4">
+          <span class="bg-yellow-400/20 text-yellow-300 text-xs font-semibold px-3 py-1 rounded-full border border-yellow-400/30">
+            Pusat Data Kesehatan & UKS Sekolah
+          </span>
+          <h2 class="text-2xl md:text-3xl font-black leading-tight">
+            Pemantauan Tumbuh Kembang, Vaksin, & Pelayanan UKS Siswa
+          </h2>
+          <p class="text-blue-100 text-xs md:text-sm leading-relaxed">
+            Selamat datang di SI- ARA UKS Sistem Informasi Aplikasi Rekam Antropometri dan Usaha Kesehatan Sekolah <strong>SD NEGERI 105855 PTPN II TANJUNG MORAWA</strong>. Aplikasi terpusat untuk mencatat pertumbuhan fisik (Antropometri), riwayat imunisasi/BIAS, serta catatan penanganan siswa sakit di Unit Kesehatan Sekolah (UKS) secara berkala.
+          </p>
+          <div class="pt-2 flex flex-wrap gap-3">
+            <button onclick="requestAppAccess('antropometri')" class="bg-yellow-400 hover:bg-yellow-300 text-blue-950 font-extrabold px-5 py-3 rounded-xl shadow-lg transition flex items-center gap-2 text-xs md:text-sm">
+              📏 Masuk Menu Antropometri & Vaksin
+            </button>
+            <button onclick="requestAppAccess('uks')" class="bg-blue-600 hover:bg-blue-500 text-white font-extrabold px-5 py-3 rounded-xl shadow-lg transition flex items-center gap-2 text-xs md:text-sm border border-blue-400">
+              🏥 Masuk Menu Riwayat UKS
+            </button>
+          </div>
+        </div>
+
+        <!-- Foto Dokumentasi Sekolah -->
+        <div class="md:col-span-5 flex justify-center">
+          <div class="relative rounded-xl overflow-hidden border-4 border-white/20 shadow-2xl group">
+            <img src="WhatsApp Image 2026-09-01 at 07.21.28.jpeg" alt="Siswa SD NEGERI 105855 PTPN II" class="w-full h-64 md:h-72 object-cover object-center transform group-hover:scale-105 transition duration-500">
+            <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-3 text-white text-[11px] text-center">
+              Dokumentasi Dokter Kecil & Siswa SDN 105855
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Kartu Ringkasan & Fitur Utama -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition space-y-2">
+          <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xl font-bold">
+            📏
+          </div>
+          <h3 class="font-bold text-slate-800 text-sm">Antropometri & IMT</h3>
+          <p class="text-slate-600 text-xs leading-relaxed">
+            Menghitung Indeks Massa Tubuh (IMT) & status gizi siswa secara otomatis.
+          </p>
+        </div>
+
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition space-y-2">
+          <div class="w-10 h-10 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center text-xl font-bold">
+            💉
+          </div>
+          <h3 class="font-bold text-slate-800 text-sm">Riwayat Vaksinasi (BIAS)</h3>
+          <p class="text-slate-600 text-xs leading-relaxed">
+            Mencatat kelengkapan imunisasi dasar dan vaksinasi anak sekolah secara berkala.
+          </p>
+        </div>
+
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition space-y-2">
+          <div class="w-10 h-10 bg-red-100 text-red-600 rounded-lg flex items-center justify-center text-xl font-bold">
+            🏥
+          </div>
+          <h3 class="font-bold text-slate-800 text-sm">Catatan UKS Siswa Sakit</h3>
+          <p class="text-slate-600 text-xs leading-relaxed">
+            Pencatatan harian keluhan sakit siswa di UKS beserta tindakan pertolongan pertama.
+          </p>
+        </div>
+
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition space-y-2">
+          <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center text-xl font-bold">
+            📥
+          </div>
+          <h3 class="font-bold text-slate-800 text-sm">Ekspor Laporan Resmi</h3>
+          <p class="text-slate-600 text-xs leading-relaxed">
+            Mengunduh seluruh rekapitulasi data kesehatan ke format CSV/Excel siap cetak.
+          </p>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= 2. DASHBOARD APLIKASI ANTROPOMETRI & VAKSIN ================= -->
+    <section id="pageAntropometri" class="hidden space-y-6">
+      
+      <!-- Sub-Header Aplikasi -->
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm gap-3">
+        <div>
+          <h2 class="text-lg font-bold text-slate-800">Ruang Pengukuran Fisik & Vaksinasi Siswa</h2>
+          <p class="text-xs text-slate-500">SD NEGERI 105855 PTPN II TANJUNG MORAWA</p>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="exportToCSVAntro()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-lg shadow transition flex items-center gap-2 shrink-0">
+            📥 Ekspor Laporan Antro & Vaksin
+          </button>
+          <button onclick="logoutApp()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold px-3 py-2.5 rounded-lg transition">
+            🔒 Keluar
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Form Input Antropometri & Vaksin -->
+        <section class="bg-white p-6 rounded-xl shadow-md lg:col-span-5 border border-slate-200">
+          <h3 class="text-base font-bold text-slate-800 mb-4 pb-2 border-b flex items-center justify-between">
+            <span>Form Input Fisik & Vaksin</span>
+            <span class="text-xs font-normal text-slate-500">Input Baru</span>
+          </h3>
+          
+          <form id="antropometriForm" onsubmit="saveAntroData(event)" class="space-y-4">
+            
+            <div>
+              <label class="block text-xs font-semibold text-slate-700">Nama Lengkap Siswa</label>
+              <input type="text" id="namaAntro" required class="w-full mt-1 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-xs" placeholder="Contoh: Budi Santoso">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700">Kelas</label>
+                <select id="kelasAntro" required class="w-full mt-1 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-xs">
+                  <option value="">Pilih...</option>
+                  <option value="1">Kelas 1</option>
+                  <option value="2">Kelas 2</option>
+                  <option value="3">Kelas 3</option>
+                  <option value="4">Kelas 4</option>
+                  <option value="5">Kelas 5</option>
+                  <option value="6">Kelas 6</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700">Jenis Kelamin</label>
+                <select id="jkAntro" required class="w-full mt-1 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-xs">
+                  <option value="L">Laki-Laki</option>
+                  <option value="P">Perempuan</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700">Tanggal Pemeriksaan</label>
+              <input type="date" id="tglAntro" required class="w-full mt-1 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-xs">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700">Berat Badan (kg)</label>
+                <input type="number" step="0.1" id="bbAntro" required class="w-full mt-1 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-xs" placeholder="cth: 24.5">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700">Tinggi Badan (cm)</label>
+                <input type="number" step="0.1" id="tbAntro" required class="w-full mt-1 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-xs" placeholder="cth: 118">
+              </div>
+            </div>
+
+            <!-- Modul Riwayat Vaksinasi -->
+            <div class="pt-2 border-t border-slate-200">
+              <label class="block text-xs font-bold text-slate-800 mb-2 flex items-center justify-between">
+                <span>💉 Riwayat Imunisasi & Vaksin (BIAS)</span>
+                <span class="text-[10px] font-normal text-slate-500">Centang yang diterima</span>
+              </label>
+              
+              <div class="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs">
+                <label class="flex items-center gap-2 cursor-pointer hover:text-blue-700">
+                  <input type="checkbox" id="vaxBCG" value="BCG/Polio" class="rounded text-blue-600 focus:ring-blue-500">
+                  <span>BCG / Polio</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer hover:text-blue-700">
+                  <input type="checkbox" id="vaxDPT" value="DPT-HB-Hib" class="rounded text-blue-600 focus:ring-blue-500">
+                  <span>DPT-HB-Hib</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer hover:text-blue-700">
+                  <input type="checkbox" id="vaxCampak" value="Campak/MR" class="rounded text-blue-600 focus:ring-blue-500">
+                  <span>Campak / MR (Kl.1)</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer hover:text-blue-700">
+                  <input type="checkbox" id="vaxDT" value="DT" class="rounded text-blue-600 focus:ring-blue-500">
+                  <span>DT (BIAS Kl.1)</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer hover:text-blue-700">
+                  <input type="checkbox" id="vaxTd" value="Td" class="rounded text-blue-600 focus:ring-blue-500">
+                  <span>Td (BIAS Kl.2 & 5)</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer hover:text-blue-700">
+                  <input type="checkbox" id="vaxHPV" value="HPV" class="rounded text-blue-600 focus:ring-blue-500">
+                  <span>HPV (Siswi Kl.5 & 6)</span>
+                </label>
+              </div>
+            </div>
+
+            <button type="submit" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 rounded-lg shadow transition mt-2 text-xs">
+              💾 Simpan Data Antropometri & Vaksin
+            </button>
+          </form>
+        </section>
+
+        <!-- Tabel Rekapitulasi Antropometri -->
+        <section class="bg-white p-6 rounded-xl shadow-md lg:col-span-7 border border-slate-200">
+          <div class="flex justify-between items-center mb-4 pb-2 border-b">
+            <div>
+              <h3 class="text-base font-bold text-slate-800">Rekapitulasi Fisik & Vaksinasi</h3>
+              <p class="text-xs text-slate-500">Data tersimpan di penyimpanan lokal</p>
+            </div>
+            <span id="totalAntro" class="text-xs bg-blue-50 text-blue-700 font-bold px-3 py-1 rounded-full border border-blue-200">Total: 0 Siswa</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left text-slate-600">
+              <thead class="text-[11px] text-slate-700 uppercase bg-slate-100 border-b">
+                <tr>
+                  <th class="py-3 px-2">Tanggal</th>
+                  <th class="py-3 px-2">Nama Siswa</th>
+                  <th class="py-3 px-2">Kl/JK</th>
+                  <th class="py-3 px-2 text-center">BB/TB</th>
+                  <th class="py-3 px-2 text-center">IMT/Gizi</th>
+                  <th class="py-3 px-2">Vaksin</th>
+                  <th class="py-3 px-2 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="tableAntroBody">
+                <!-- Data dimuat via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= 3. DASHBOARD APLIKASI RIWAYAT UKS (SISWA SAKIT) ================= -->
+    <section id="pageUks" class="hidden space-y-6">
+      
+      <!-- Sub-Header UKS -->
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm gap-3">
+        <div>
+          <h2 class="text-lg font-bold text-slate-800">Ruang Pelayanan & Riwayat Siswa Sakit di UKS</h2>
+          <p class="text-xs text-slate-500">SD NEGERI 105855 PTPN II TANJUNG MORAWA</p>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="exportToCSVUks()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-lg shadow transition flex items-center gap-2 shrink-0">
+            📥 Ekspor Laporan UKS (CSV/Excel)
+          </button>
+          <button onclick="logoutApp()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold px-3 py-2.5 rounded-lg transition">
+            🔒 Keluar
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Form Input Siswa Sakit UKS -->
+        <section class="bg-white p-6 rounded-xl shadow-md lg:col-span-5 border border-slate-200">
+          <h3 class="text-base font-bold text-slate-800 mb-4 pb-2 border-b flex items-center justify-between">
+            <span>Form Kunjungan & Sakit UKS</span>
+            <span class="text-xs font-normal text-slate-500">Catat Baru</span>
+          </h3>
+          
+          <form id="uksForm" onsubmit="saveUksData(event)" class="space-y-4">
+            
+            <div>
+              <label class="block text-xs font-semibold text-slate-700">Nama Lengkap Siswa</label>
+              <input type="text" id="namaUks" required class="w-full mt-1 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none text-xs" placeholder="Contoh: Siti Aminah">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700">Kelas</label>
+                <select id="kelasUks" required class="w-full mt-1 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none text-xs">
+                  <option value="">Pilih...</option>
+                  <option value="1">Kelas 1</option>
+                  <option value="2">Kelas 2</option>
+                  <option value="3">Kelas 3</option>
+                  <option value="4">Kelas 4</option>
+                  <option value="5">Kelas 5</option>
+                  <option value="6">Kelas 6</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700">Jenis Kelamin</label>
+                <select id="jkUks" required class="w-full mt-1 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none text-xs">
+                  <option value="L">Laki-Laki</option>
+                  <option value="P">Perempuan</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700">Tanggal Kunjungan / Sakit</label>
+              <input type="date" id="tglUks" required class="w-full mt-1 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none text-xs">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700">Keluhan / Gejala Sakit</label>
+              <input type="text" id="keluhanUks" required class="w-full mt-1 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none text-xs" placeholder="Cth: Demam, pusing, masuk angin, mual...">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700">Penanganan / Tindakan di UKS</label>
+              <textarea id="tindakanUks" rows="2" required class="w-full mt-1 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none text-xs" placeholder="Cth: Diberi obat paracetamol, istirahat di bed UKS, kompres air hangat..."></textarea>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700">Keterangan Akhir</label>
+              <select id="statusUks" required class="w-full mt-1 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none text-xs">
+                <option value="Kembali ke Kelas">Kembali Belajar ke Kelas</option>
+                <option value="Istirahat di UKS">Istirahat di Ruang UKS</option>
+                <option value="Pulang / Dijemput Orang Tua">Dipulangkan / Dijemput Orang Tua</option>
+                <option value="Dirujuk ke Puskesmas/Klinik">Dirujuk ke Puskesmas / Klinik</option>
+              </select>
+            </div>
+
+            <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg shadow transition mt-2 text-xs">
+              💾 Simpan Catatan UKS Siswa
+            </button>
+          </form>
+        </section>
+
+        <!-- Tabel Riwayat UKS -->
+        <section class="bg-white p-6 rounded-xl shadow-md lg:col-span-7 border border-slate-200">
+          <div class="flex justify-between items-center mb-4 pb-2 border-b">
+            <div>
+              <h3 class="text-base font-bold text-slate-800">Daftar Riwayat Kunjungan UKS</h3>
+              <p class="text-xs text-slate-500">Catatan siswa sakit & penanganan harian</p>
+            </div>
+            <span id="totalUks" class="text-xs bg-red-50 text-red-700 font-bold px-3 py-1 rounded-full border border-red-200">Total: 0 Kunjungan</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left text-slate-600">
+              <thead class="text-[11px] text-slate-700 uppercase bg-slate-100 border-b">
+                <tr>
+                  <th class="py-3 px-2">Tanggal</th>
+                  <th class="py-3 px-2">Nama Siswa</th>
+                  <th class="py-3 px-2">Kl/JK</th>
+                  <th class="py-3 px-2">Keluhan</th>
+                  <th class="py-3 px-2">Tindakan & Status</th>
+                  <th class="py-3 px-2 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="tableUksBody">
+                <!-- Data dimuat via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ================= MODAL LOGIN KATA SANDI ================= -->
+  <div id="passwordModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl border border-slate-100 overflow-hidden p-6 space-y-4">
+      
+      <div class="text-center space-y-2">
+        <div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center mx-auto text-2xl">
+          🔑
+        </div>
+        <h3 class="text-lg font-bold text-slate-800">Akses Masuk Petugas</h3>
+        <p class="text-xs text-slate-500">Masukkan kata sandi untuk mengakses Sistem Kesehatan SDN 105855.</p>
+      </div>
+
+      <form onsubmit="verifyPassword(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Kata Sandi</label>
+          <div class="relative">
+            <input type="password" id="inputPassword" required class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-xs" placeholder="Masukkan kata sandi...">
+            <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 text-xs">
+              👁️
+            </button>
+          </div>
+          <p id="passwordError" class="text-red-500 text-[11px] font-semibold mt-1 hidden">Kata sandi salah! Silakan coba lagi.</p>
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button type="button" onclick="closePasswordModal()" class="w-1/2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold py-2.5 rounded-lg transition">
+            Batal
+          </button>
+          <button type="submit" class="w-1/2 bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold py-2.5 rounded-lg shadow transition">
+            Masuk
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Footer Resmi Sekolah -->
+  <footer class="bg-slate-800 text-slate-300 py-6 text-xs text-center border-t border-slate-700 mt-8">
+    <div class="max-w-7xl mx-auto px-4 space-y-1">
+      <p class="font-bold text-white text-sm">SD NEGERI 105855 PTPN II TANJUNG MORAWA</p>
+      <p class="text-slate-400">Kecamatan Tanjung Morawa, Kabupaten Deli Serdang, Sumatera Utara • Kode Pos 20362</p>
+      <p class="text-slate-500 text-[11px] pt-2">© Sistem Informasi Antropometri, Vaksinasi & UKS Sekolah Dasar</p>
+    </div>
+  </footer>
+
+  <!-- Script Aplikasi -->
+  <script>
+    const NAMA_SEKOLAH = "SD NEGERI 105855 PTPN II TANJUNG MORAWA";
+    const APP_PASSWORD = "sdn105855";
+    // Isi dengan URL Web App Google Apps Script setelah deployment.
+    const GOOGLE_APPS_SCRIPT_URL = "TEMPEL_URL_WEB_APP_APPS_SCRIPT_DI_SINI";
+    let dataAntroSpreadsheet = [];
+    let dataUksSpreadsheet = [];
+
+    // Komunikasi JSONP agar pembacaan spreadsheet dapat dilakukan lintas domain.
+    function spreadsheetRequest(action, payload = {}) {
+      return new Promise((resolve, reject) => {
+        if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.includes("TEMPEL_URL")) {
+          reject(new Error("URL Web App Apps Script belum dipasang."));
+          return;
+        }
+        const callbackName = "spreadsheetCallback_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
+        const script = document.createElement("script");
+        const timeout = setTimeout(() => finish(new Error("Waktu koneksi ke spreadsheet habis.")), 20000);
+        function finish(error, result) {
+          clearTimeout(timeout);
+          delete window[callbackName];
+          script.remove();
+          if (error) reject(error); else if (!result || !result.success) reject(new Error(result?.message || "Permintaan spreadsheet gagal.")); else resolve(result);
+        }
+        window[callbackName] = result => finish(null, result);
+        script.onerror = () => finish(new Error("Tidak dapat menghubungi Google Apps Script."));
+        const params = new URLSearchParams({ action, callback: callbackName, payload: JSON.stringify(payload) });
+        script.src = GOOGLE_APPS_SCRIPT_URL + (GOOGLE_APPS_SCRIPT_URL.includes("?") ? "&" : "?") + params.toString();
+        document.body.appendChild(script);
+      });
+    }
+
+    async function kirimKeSpreadsheet(sheetName, data) {
+      try {
+        await spreadsheetRequest("save", { sheetName, data });
+        return true;
+      } catch (error) {
+        alert("Gagal menyimpan ke Google Spreadsheet: " + error.message);
+        console.error(error);
+        return false;
+      }
+    }
+
+    async function hapusDariSpreadsheet(sheetName, id) {
+      try {
+        await spreadsheetRequest("delete", { sheetName, id });
+        return true;
+      } catch (error) {
+        alert("Gagal menghapus data di Google Spreadsheet: " + error.message);
+        console.error(error);
+        return false;
+      }
+    }
+
+    async function muatDataAntro() {
+      try {
+        const result = await spreadsheetRequest("list", { sheetName: "Antropometri" });
+        dataAntroSpreadsheet = result.data || [];
+        renderAntroTable();
+      } catch (error) {
+        document.getElementById('tableAntroBody').innerHTML = `<tr><td colspan="7" class="text-center py-8 text-red-500">Gagal memuat spreadsheet: ${error.message}</td></tr>`;
+      }
+    }
+
+    async function muatDataUks() {
+      try {
+        const result = await spreadsheetRequest("list", { sheetName: "Riwayat UKS" });
+        dataUksSpreadsheet = result.data || [];
+        renderUksTable();
+      } catch (error) {
+        document.getElementById('tableUksBody').innerHTML = `<tr><td colspan="6" class="text-center py-8 text-red-500">Gagal memuat spreadsheet: ${error.message}</td></tr>`;
+      }
+    }
+
+    function hitungIMT(bb, tbCm) {
+      const tbM = tbCm / 100;
+      const imt = (bb / (tbM * tbM)).toFixed(1);
+      
+      let status = '';
+      let colorClass = '';
+
+      if (imt < 13.5) {
+        status = 'Sangat Kurus';
+        colorClass = 'bg-red-100 text-red-700 font-bold';
+      } else if (imt >= 13.5 && imt < 15.0) {
+        status = 'Kurus';
+        colorClass = 'bg-yellow-100 text-yellow-800 font-bold';
+      } else if (imt >= 15.0 && imt < 18.5) {
+        status = 'Normal';
+        colorClass = 'bg-green-100 text-green-700 font-bold';
+      } else if (imt >= 18.5 && imt < 21.0) {
+        status = 'Gemuk';
+        colorClass = 'bg-orange-100 text-orange-700 font-bold';
+      } else {
+        status = 'Obesitas';
+        colorClass = 'bg-purple-100 text-purple-700 font-bold';
+      }
+
+      return { imt, status, colorClass };
+    }
+
+    function getSelectedVaccines() {
+      const vaccines = [];
+      if (document.getElementById('vaxBCG').checked) vaccines.push('BCG/Polio');
+      if (document.getElementById('vaxDPT').checked) vaccines.push('DPT-HB-Hib');
+      if (document.getElementById('vaxCampak').checked) vaccines.push('Campak/MR');
+      if (document.getElementById('vaxDT').checked) vaccines.push('DT');
+      if (document.getElementById('vaxTd').checked) vaccines.push('Td');
+      if (document.getElementById('vaxHPV').checked) vaccines.push('HPV');
+      return vaccines;
+    }
+
+    async function saveAntroData(event) {
+      event.preventDefault();
+
+      const nama = document.getElementById('namaAntro').value;
+      const kelas = document.getElementById('kelasAntro').value;
+      const jk = document.getElementById('jkAntro').value;
+      const tglUkur = document.getElementById('tglAntro').value;
+      const bb = parseFloat(document.getElementById('bbAntro').value);
+      const tb = parseFloat(document.getElementById('tbAntro').value);
+      const vaxList = getSelectedVaccines();
+
+      const { imt, status, colorClass } = hitungIMT(bb, tb);
+
+      const newRecord = {
+        id: Date.now(),
+        nama, kelas, jk, tglUkur, bb, tb, imt, status, colorClass,
+        vaxList: vaxList.length > 0 ? vaxList : ['Belum Dicatat']
+      };
+
+      const tersimpan = await kirimKeSpreadsheet("Antropometri", {
+        id: newRecord.id,
+        tanggal: tglUkur,
+        nama, kelas, jenisKelamin: jk, beratBadanKg: bb, tinggiBadanCm: tb,
+        imt, statusGizi: status, vaksin: newRecord.vaxList.join(", ")
+      });
+      if (!tersimpan) return;
+
+      document.getElementById('antropometriForm').reset();
+      document.getElementById('tglAntro').valueAsDate = new Date();
+      await muatDataAntro();
+    }
+
+    async function deleteAntroData(id) {
+      if (confirm('Apakah Anda yakin ingin menghapus data antropometri ini?')) {
+        if (await hapusDariSpreadsheet('Antropometri', id)) await muatDataAntro();
+      }
+    }
+
+    function renderAntroTable() {
+      const data = getStoredAntroData();
+      const tbody = document.getElementById('tableAntroBody');
+      document.getElementById('totalAntro').innerText = `Total: ${data.length} Siswa`;
+      tbody.innerHTML = '';
+
+      if (data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400">Belum ada data antropometri & vaksin.</td></tr>`;
+        return;
+      }
+
+      data.forEach(item => {
+        const vaxBadges = (item.vaxList || []).map(v => 
+          `<span class="inline-block bg-purple-50 text-purple-700 border border-purple-200 px-1.5 py-0.5 rounded text-[10px] mr-1 mb-1 font-semibold">${v}</span>`
+        ).join('');
+
+        const row = `
+          <tr class="border-b hover:bg-slate-50 transition">
+            <td class="py-3 px-2 text-xs">${item.tglUkur}</td>
+            <td class="py-3 px-2 font-semibold text-slate-800">${item.nama}</td>
+            <td class="py-3 px-2">Kl. ${item.kelas} (${item.jk})</td>
+            <td class="py-3 px-2 text-center">${item.bb} kg<br><span class="text-slate-400">${item.tb} cm</span></td>
+            <td class="py-3 px-2 text-center">
+              <span class="font-bold text-slate-700">${item.imt}</span><br>
+              <span class="text-[9px] px-2 py-0.5 rounded-full ${item.colorClass}">${item.status}</span>
+            </td>
+            <td class="py-3 px-2">${vaxBadges}</td>
+            <td class="py-3 px-2 text-center">
+              <button onclick="deleteAntroData(${item.id})" class="text-red-500 hover:text-red-700 text-xs font-semibold">Hapus</button>
+            </td>
+          </tr>
+        `;
+        tbody.innerHTML += row;
+      });
+    }
+
+    function exportToCSVAntro() {
+      const data = getStoredAntroData();
+      if (data.length === 0) {
+        alert('Tidak ada data untuk diekspor!');
+        return;
+      }
+
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += `REKAPITULASI ANTROPOMETRI & VAKSINASI SISWA\n`;
+      csvContent += `Sekolah: ${NAMA_SEKOLAH}\nTanggal Cetak: ${new Date().toLocaleDateString('id-ID')}\n\n`;
+      csvContent += "Tanggal,Nama Siswa,Kelas,Jenis Kelamin,BB (kg),TB (cm),IMT,Status Gizi,Riwayat Vaksin\n";
+
+      data.forEach(row => {
+        const vaxString = (row.vaxList || []).join('; ');
+        csvContent += `"${row.tglUkur}","${row.nama}","Kelas ${row.kelas}","${row.jk}",${row.bb},${row.tb},${row.imt},"${row.status}","${vaxString}"\n`;
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Antropometri_Vaksin_SDN_105855_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+
+    // --- DATA HANDLING RIWAYAT UKS (SISWA SAKIT) ---
+    function getStoredUksData() {
+      return dataUksSpreadsheet;
+    }
+
+    async function saveUksData(event) {
+      event.preventDefault();
+
+      const nama = document.getElementById('namaUks').value;
+      const kelas = document.getElementById('kelasUks').value;
+      const jk = document.getElementById('jkUks').value;
+      const tglUks = document.getElementById('tglUks').value;
+      const keluhan = document.getElementById('keluhanUks').value;
+      const tindakan = document.getElementById('tindakanUks').value;
+      const status = document.getElementById('statusUks').value;
+
+      const newRecord = {
+        id: Date.now(),
+        nama, kelas, jk, tglUks, keluhan, tindakan, status
+      };
+
+      const tersimpan = await kirimKeSpreadsheet("Riwayat UKS", {
+        id: newRecord.id,
+        tanggal: tglUks,
+        nama, kelas, jenisKelamin: jk, keluhan, tindakan, statusAkhir: status
+      });
+      if (!tersimpan) return;
+
+      document.getElementById('uksForm').reset();
+      document.getElementById('tglUks').valueAsDate = new Date();
+      await muatDataUks();
+    }
+
+    async function deleteUksData(id) {
+      if (confirm('Apakah Anda yakin ingin menghapus catatan UKS ini?')) {
+        if (await hapusDariSpreadsheet('Riwayat UKS', id)) await muatDataUks();
+      }
+    }
+
+    function renderUksTable() {
+      const data = getStoredUksData();
+      const tbody = document.getElementById('tableUksBody');
+      document.getElementById('totalUks').innerText = `Total: ${data.length} Kunjungan`;
+      tbody.innerHTML = '';
+
+      if (data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-400">Belum ada catatan siswa sakit di UKS.</td></tr>`;
+        return;
+      }
+
+      data.forEach(item => {
+        let badgeColor = 'bg-blue-50 text-blue-700 border-blue-200';
+        if (item.status.includes('Pulang')) badgeColor = 'bg-orange-50 text-orange-700 border-orange-200';
+        if (item.status.includes('Dirujuk')) badgeColor = 'bg-red-50 text-red-700 border-red-200';
+        if (item.status.includes('Istirahat')) badgeColor = 'bg-purple-50 text-purple-700 border-purple-200';
+
+        const row = `
+          <tr class="border-b hover:bg-slate-50 transition">
+            <td class="py-3 px-2 text-xs">${item.tglUks}</td>
+            <td class="py-3 px-2 font-semibold text-slate-800">${item.nama}</td>
+            <td class="py-3 px-2">Kl. ${item.kelas} (${item.jk})</td>
+            <td class="py-3 px-2 font-medium text-red-600">${item.keluhan}</td>
+            <td class="py-3 px-2">
+              <p class="text-slate-700">${item.tindakan}</p>
+              <span class="inline-block mt-1 border px-2 py-0.5 rounded text-[10px] font-semibold ${badgeColor}">${item.status}</span>
+            </td>
+            <td class="py-3 px-2 text-center">
+              <button onclick="deleteUksData(${item.id})" class="text-red-500 hover:text-red-700 text-xs font-semibold">Hapus</button>
+            </td>
+          </tr>
+        `;
+        tbody.innerHTML += row;
+      });
+    }
+
+    function exportToCSVUks() {
+      const data = getStoredUksData();
+      if (data.length === 0) {
+        alert('Tidak ada data UKS untuk diekspor!');
+        return;
+      }
+
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += `REKAPITULASI RIWAYAT SISWA SAKIT DI UKS\n`;
+      csvContent += `Sekolah: ${NAMA_SEKOLAH}\nTanggal Cetak: ${new Date().toLocaleDateString('id-ID')}\n\n`;
+      csvContent += "Tanggal,Nama Siswa,Kelas,Jenis Kelamin,Keluhan,Tindakan,Status Akhir\n";
+
+      data.forEach(row => {
+        csvContent += `"${row.tglUks}","${row.nama}","Kelas ${row.kelas}","${row.jk}","${row.keluhan}","${row.tindakan}","${row.status}"\n`;
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Riwayat_UKS_SDN_105855_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Tabel selalu dimuat dari Google Spreadsheet, bukan penyimpanan lokal.
+    muatDataAntro();
+    muatDataUks();
+  </script>
+</body>
+</html>
