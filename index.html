@@ -577,25 +577,66 @@
     // --- DATA HANDLING ANTROPOMETRI & VAKSIN ---
     let antroData = [];
 
-    async function loadAntro() {
-      document.getElementById('tableAntroBody').innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400">Memuat data dari spreadsheet...</td></tr>`;
-      try {
-        antroData = (await apiList('antro')).map(r => {
-          const g = hitungIMT(parseFloat(r.bb), parseFloat(r.tb));
-          return {
-            ...r,
-            bb: r.bb, tb: r.tb,
-            imt: r.imt || g.imt,
-            status: r.status || g.status,
-            colorClass: warnaStatusGizi(r.status || g.status),
-            vaxList: String(r.vaxList || 'Belum Dicatat').split(';').map(s => s.trim()).filter(Boolean)
-          };
-        });
-        renderAntroTable();
-      } catch (err) {
-        document.getElementById('tableAntroBody').innerHTML = `<tr><td colspan="7" class="text-center py-8 text-red-500">Gagal memuat data: ${esc(err.message)}</td></tr>`;
-      }
-    }
+
+async function loadAntro() {
+  const tbody = document.getElementById('tableAntroBody');
+
+  tbody.innerHTML = `
+    <tr>
+      <td colspan="7" class="text-center py-8 text-slate-400">
+        Memuat data dari spreadsheet...
+      </td>
+    </tr>`;
+
+  try {
+    const rows = await apiList('antro');
+
+    antroData = rows.map(r => {
+      const bb = r.bb;
+      const tb = r.tb;
+
+      const bbNum = parseFloat(String(bb ?? '').replace(',', '.'));
+      const tbNum = parseFloat(String(tb ?? '').replace(',', '.'));
+
+      const g = hitungIMT(bbNum, tbNum);
+
+      const imt =
+        r.imt !== '' && r.imt != null
+          ? r.imt
+          : g.imt;
+
+      const status =
+        r.status !== '' && r.status != null
+          ? r.status
+          : g.status;
+
+      const vaxList = String(r.vaxList ?? '')
+        .split(';')
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      return {
+        ...r,
+        bb,
+        tb,
+        imt,
+        status,
+        colorClass: warnaStatusGizi(status),
+        vaxList
+      };
+    });
+
+    renderAntroTable();
+  } catch (err) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7"
+            class="text-center py-8 text-red-500">
+          Gagal memuat data: ${esc(err.message)}
+        </td>
+      </tr>`;
+  }
+}
 
     function warnaStatusGizi(status) {
       switch (status) {
