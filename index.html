@@ -634,7 +634,7 @@
 
     async function saveAntroData(event) {
       event.preventDefault();
-
+ 
       const nama = document.getElementById('namaAntro').value;
       const kelas = document.getElementById('kelasAntro').value;
       const jk = document.getElementById('jkAntro').value;
@@ -642,15 +642,23 @@
       const bb = parseFloat(document.getElementById('bbAntro').value);
       const tb = parseFloat(document.getElementById('tbAntro').value);
       const vaxList = getSelectedVaccines();
-
+ 
       const { imt, status } = hitungIMT(bb, tb);
-
+ 
+      // Semua data dikirim sebagai TEKS (awalan ' memaksa Google Sheets menyimpan sebagai teks)
       const record = {
-        id: String(Date.now()),
-        tglUkur, nama, kelas, jk, bb, tb, imt, status,
-        vaxList: (vaxList.length > 0 ? vaxList : ['Belum Dicatat']).join('; ')
+        id: toText(Date.now()),
+        tglUkur: toText(tglUkur),
+        nama: toText(nama),
+        kelas: toText(kelas),
+        jk: toText(jk),
+        bb: toText(bb),
+        tb: toText(tb),
+        imt: toText(imt),
+        status: toText(status),
+        vaxList: toText((vaxList.length > 0 ? vaxList : ['Belum Dicatat']).join('; '))
       };
-
+      
       setSubmitBusy('antropometriForm', true);
       try {
         await apiPost({ action: 'add', sheet: 'antro', record });
@@ -752,18 +760,19 @@
 
     async function saveUksData(event) {
       event.preventDefault();
-
+ 
+      // Semua data dikirim sebagai TEKS (awalan ' memaksa Google Sheets menyimpan sebagai teks)
       const record = {
-        id: String(Date.now()),
-        tglUks: document.getElementById('tglUks').value,
-        nama: document.getElementById('namaUks').value,
-        kelas: document.getElementById('kelasUks').value,
-        jk: document.getElementById('jkUks').value,
-        keluhan: document.getElementById('keluhanUks').value,
-        tindakan: document.getElementById('tindakanUks').value,
-        status: document.getElementById('statusUks').value
+        id: toText(Date.now()),
+        tglUks: toText(document.getElementById('tglUks').value),
+        nama: toText(document.getElementById('namaUks').value),
+        kelas: toText(document.getElementById('kelasUks').value),
+        jk: toText(document.getElementById('jkUks').value),
+        keluhan: toText(document.getElementById('keluhanUks').value),
+        tindakan: toText(document.getElementById('tindakanUks').value),
+        status: toText(document.getElementById('statusUks').value)
       };
-
+      
       setSubmitBusy('uksForm', true);
       try {
         await apiPost({ action: 'add', sheet: 'uks', record });
